@@ -13,7 +13,7 @@
             pru0_output_pins: pru0_output_pins {
                 pinctrl-single,pins = <
 					0x030 0x06  /* P8_12 to PRU output */
-					0x034 0x06  /* P8_12 to PRU output */
+					0x034 0x06  /* P8_11 to PRU output */
 					0x190 0x05  /* P9_31 to PRU output */
                     0x194 0x05  /* P9_29 to PRU output */
 					0x198 0x05  /* P9_30 to PRU output */
