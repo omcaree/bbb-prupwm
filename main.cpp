@@ -17,8 +17,7 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
- 
-#include <signal.h>
+
 #include "pruPWM.h"
 
 // Entry point
@@ -30,7 +29,7 @@ int main() {
 	myPWM->setFailsafeValue(0, 1000000);
 	
 	// Set a 2s failsafe timeout
-	myPWM->setFailsafeTimeout(5000);
+	myPWM->setFailsafeTimeout(2000);
 	
 	// Start the PRU
 	myPWM->start();
