@@ -23,6 +23,11 @@
 PRUPWM::PRUPWM(unsigned int frequency) : PRU(0) {
 	this->stop();
 	this->setFrequency(frequency);
+	this->setFailsafeTimeout(0);
+	for (int i = 0; i < 8; i++) {
+		this->setChannelValue(i, 1500000);
+		this->setFailsafeValue(i, 1500000);
+	}
 }
 
 void PRUPWM::start() {
@@ -37,7 +42,19 @@ void PRUPWM::setFrequency(unsigned int frequency) {
 void PRUPWM::setChannelValue(unsigned int channel, unsigned long pwm_ns) {
 	this->setPRUDuty(channel, pwm_ns);
 }
+void PRUPWM::setFailsafeValue(unsigned int channel, unsigned long pwm_ns) {
+	this->setPRUDuty(channel+9, pwm_ns);
+}
+
+void PRUPWM::setFailsafeTimeout(unsigned int timeout_ms) {
+	this->failsafeTimeout = timeout_ms;
+	this->updateFailsafe();
+}
 
 void PRUPWM::setPRUDuty(unsigned int channel, unsigned long pwm_ns) {
 	this->setSharedMemoryInt(channel+1, (unsigned int)((unsigned long long)pwm_ns / PRUPWM::nanosecondsPerCycle));
+	this->updateFailsafe();
+}
+void PRUPWM::updateFailsafe() {
+	this->setSharedMemoryInt(9, this->failsafeTimeout * this->pwmFrequency / 1000);
 }

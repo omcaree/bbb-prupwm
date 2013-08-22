@@ -21,37 +21,24 @@
 #include <signal.h>
 #include "pruPWM.h"
 
-// Some globals
-PRUPWM *myPWM;
-bool running;
-
-// Default all channels (handy way of quitting with known output state)
-void setDefaults(int signal = 0) {
-	for (int i = 0; i < 8; i++) {
-		myPWM->setChannelValue(i,1500000);
-	}
-	running = false;
-}
-
 // Entry point
 int main() {
 	// Initialise PRU PWM
-	myPWM = new PRUPWM();
+	PRUPWM *myPWM = new PRUPWM();
+
+	// Set Channel 0 failsafe value
+	myPWM->setFailsafeValue(0, 1000000);
 	
-	// Default all channels
-	setDefaults();
-	
-	// Register 'setDefaults' as interrupt handler to catch Ctrl+C
-	signal(SIGINT, setDefaults);
+	// Set a 2s failsafe timeout
+	myPWM->setFailsafeTimeout(5000);
 	
 	// Start the PRU
 	myPWM->start();
 
 	// An example loop
-	running = true;
 	int pwm0 = 1000000, pwm7 = 2000000;
 	int step = 100;
-	while (running) {
+	while (true) {
 		myPWM->setChannelValue(0,pwm0);
 		myPWM->setChannelValue(7,pwm7);
 		pwm0 += step;

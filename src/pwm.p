@@ -34,16 +34,24 @@ START:
 // Shared memory registers 
 //	Int 0: 		Total PWM period (number of PRU cycles)
 //	Int 1-8:	Pulse width for each channel (number of PRU cycles)
+//	Int 9:		Failsafe timeout (number of PWM cycles)
+//				e.g. for a PWM frequency of 50Hz, a value of 100 would be a 2s timeout
+//				Must be reset everytime channels are updated
+//				Set to 0 to disable failsafe feature
+//	Int 10-17:	Failsafe PWM periods (number of PRU cycles)
 LOOP1:										// Outer loop repeats everything at PWM period
-	LBCO	r0, CONST_PRUSHAREDRAM, 0, 36	// Load in registers from shared memory
-	SET		r30.t0							// Turn on all output channels for start of cycle
-	SET		r30.t1
-	SET		r30.t2
-	SET		r30.t3
-	SET		r30.t4
-	SET		r30.t5
-	SET		r30.t6
-	SET		r30.t7
+	LBCO	r0, CONST_PRUSHAREDRAM, 0, 40	// Load in registers from shared memory
+	QBEQ	NO_FAILSAFE, r9, 0				// Check to see if failsafe is enabled
+	QBEQ	FAILSAFE, r9, 1					// Check to see if failsafe timeout has occured
+	SUB		r9, r9, 1						// If not timed out, decrement timeout counter
+	SBCO	r9, CONST_PRUSHAREDRAM, 36, 4	// Write timeout counter back to shared RAM
+	QBA		NO_FAILSAFE						// Skip failsafe action
+FAILSAFE:
+	LBCO	r1, CONST_PRUSHAREDRAM, 40, 32	// Overwrite commanded positions with failsafe positions
+
+NO_FAILSAFE:
+	MOV		r30.b0, 0xFF					// Turn on all output channels for start of cycle
+	
 LOOP2:										// Inner loop to handle channels
 		SUB		r0, r0, 1					// Subtract one from each register
 		SUB		r1, r1, 1

@@ -33,10 +33,14 @@
 	
 	void setFrequency(unsigned int frequency);
 	void setChannelValue(unsigned int channel, unsigned long pwm_ns);	
+	void setFailsafeValue(unsigned int channel, unsigned long pwm_ns);
+	void setFailsafeTimeout(unsigned int timeout_ms);
  private:
 	void setPRUDuty(unsigned int channel, unsigned long pwm_ns);
+	void updateFailsafe();
 	static const unsigned int nanosecondsPerCycle = 95;
 	unsigned int pwmFrequency;
+	unsigned int failsafeTimeout;
 };
  
  #endif

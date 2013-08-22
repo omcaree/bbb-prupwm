@@ -5,6 +5,10 @@ This project contains everything you need to get a simple C++ application contro
 
 This work is based on my [node.js module](https://github.com/omcaree/node-pru), but designed to work from C++ instead.
 
+Update 28th August 2013:
+
+ * Modified PRU code and C++ class to implement a simple failsafe timeout. If host code hangs or crashes the PRU will revert the channels to predefined PWM values after a timeout has elapsed
+
 Prerequisites
 -------------
 Make sure you have build-essential installed so that you can compile things
